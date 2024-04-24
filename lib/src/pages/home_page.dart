@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:my_schedule/src/pages/agenda_page.dart';
+import '../routes/routes.dart';
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
-  const HomePage({ super.key });
-
-   @override
-   Widget build(BuildContext context) {
-       return MaterialApp(
-        home: AgendaPage(),
-       );
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      routerDelegate: routes.routerDelegate,
+      routeInformationParser: routes.routeInformationParser,
+      routeInformationProvider: routes.routeInformationProvider,
+    );
   }
 }

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import '../models/todo.dart';
 
 class AgendaPage extends StatefulWidget {
@@ -12,19 +15,23 @@ class _AgendaPageState extends State<AgendaPage> {
   DateTime date = DateTime.now();
 
   @override
+  void initState() {
+    initializeDateFormatting('pt_BR');
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: const Text('MySchedule',
-                style: TextStyle(
-                  color: Colors.white,
-                )),
-            centerTitle: true,
-            backgroundColor: Colors.blue,
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(600),
-            ))),
+          title: Image.asset('assets/pequeno.png', fit: BoxFit.cover),
+          backgroundColor: const Color.fromARGB(255, 40, 145, 249),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(70),
+            ),
+          ),
+        ),
         body: Column(
           children: [
             Padding(
@@ -45,16 +52,26 @@ class _AgendaPageState extends State<AgendaPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 10, right: 10),
                       child: Container(
-                        height: 50,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.blue),
-                        child: const Center(
-                          child: Text(
-                            'Tarefas do dia',
-                            style: TextStyle(
-                              fontSize: 23,
-                              color: Colors.white,
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(13),
+                            border: Border.all(
+                              color: Colors.blue,
+                              width: 2,
+                            )),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: Colors.white, width: 1.5),
+                              borderRadius: BorderRadius.circular(13),
+                              color: Colors.blue),
+                          child: Center(
+                            child: Text(
+                              DateFormat('dd/MM/yy').format(date),
+                              style: const TextStyle(
+                                fontSize: 23,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -63,24 +80,45 @@ class _AgendaPageState extends State<AgendaPage> {
                   )
                 ],
               ),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Row(
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(13),
+                            border: Border.all(
+                              color: Colors.blue,
+                              width: 2,
+                            )),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: Colors.white, width: 1.5),
+                              borderRadius: BorderRadius.circular(13),
+                              color: Colors.blue),
+                          child: const Center(
+                            child: Text(
+                              "Atividades do dia",
+                              style: TextStyle(
+                                fontSize: 23,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )),
+                ),
+              ],
             )
-            // ElevatedButton(
-            //   onPressed: () {},
-            //   style: ,
-            //   child: const Center(
-            //     child: Row(
-            //       crossAxisAlignment: CrossAxisAlignment.center,
-            //       mainAxisAlignment: MainAxisAlignment.center,
-            //       children: [
-            //         Icon(Icons.calendar_month),
-            //         SizedBox(
-            //           width: 15,
-            //         ),
-            //         Text('Atividades do dia 22/04/2024')
-            //       ],
-            //     ),
-            //   ),
-            // )
           ],
         ));
   }
@@ -93,10 +131,16 @@ class _AgendaPageState extends State<AgendaPage> {
   }
 
   Future<void> _selectDate() async {
-    DateTime? _picked = await showDatePicker(
+    DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(2020),
         lastDate: DateTime(2100));
+
+    if (picked != null) {
+      setState(() {
+        date = picked;
+      });
+    }
   }
 }
