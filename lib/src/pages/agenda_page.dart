@@ -24,7 +24,12 @@ class _AgendaPageState extends State<AgendaPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Image.asset('assets/pequeno.png', fit: BoxFit.cover),
+          title: const Image(
+            image: AssetImage('lib/assets/pequeno.png'),
+            fit: BoxFit.cover,
+          ),
+          toolbarHeight: 100,
+          centerTitle: true,
           backgroundColor: const Color.fromARGB(255, 40, 145, 249),
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
@@ -118,7 +123,14 @@ class _AgendaPageState extends State<AgendaPage> {
                       )),
                 ),
               ],
-            )
+            ),
+            // Container(
+            //     color: Colors.blue,
+            //     height: 200,
+            //     child: Image.asset(
+            //       'assets/pequeno.png',
+            //       fit: BoxFit.cover
+            //     ))
           ],
         ));
   }
