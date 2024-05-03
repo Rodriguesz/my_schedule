@@ -23,6 +23,7 @@ class _AgendaPageState extends State<AgendaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Image(
           image: AssetImage('lib/assets/150.png'),
@@ -129,7 +130,7 @@ class _AgendaPageState extends State<AgendaPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => _showAddTodoForm(),
         shape: const CircleBorder(),
         backgroundColor: Colors.blue,
         tooltip: 'Increment',
@@ -148,22 +149,63 @@ class _AgendaPageState extends State<AgendaPage> {
     );
   }
 
-  Form _addTodoForm() {
+  void _showAddTodoForm() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: AlertDialog(
+            title: Text('Adicionar Tarefa'),
+            contentPadding: EdgeInsets.zero,
+            content: _addTodoForm(), // Chame o formulário aqui
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Aqui você pode adicionar lógica para salvar a tarefa
+                  // Por enquanto, apenas feche o diálogo
+                  Navigator.of(context).pop();
+                },
+                child: Text('Salvar'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _addTodoForm() {
     return Form(
-      key: _formKey,
-      child:  Padding(padding: EdgeInsets.all(8.0),child: Column(
-        children: [
-          TextFormField(
-              decoration: InputDecoration(labelText: 'Nome'),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Por favor, insira seu nome';
-                }
-                return null;
-              },
-            ),
-        ],
-      ),));
+        key: _formKey,
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Titulo',
+                  labelStyle: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  hintText: 'Insira o titulo da atividade',
+                ),
+                validator: (value) {
+                  if (value != null && value.isEmpty) {
+                    return 'Por favor, insira seu nome';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ));
   }
 
   Future<void> _selectDate() async {
