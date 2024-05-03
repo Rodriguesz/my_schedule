@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import '../models/todo.dart';
@@ -13,6 +12,7 @@ class AgendaPage extends StatefulWidget {
 
 class _AgendaPageState extends State<AgendaPage> {
   DateTime date = DateTime.now();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -23,116 +23,122 @@ class _AgendaPageState extends State<AgendaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Image(
-            image: AssetImage('lib/assets/pequeno.png'),
-            fit: BoxFit.cover,
-          ),
-          toolbarHeight: 100,
-          centerTitle: true,
-          backgroundColor: const Color.fromARGB(255, 40, 145, 249),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(70),
-            ),
+      appBar: AppBar(
+        title: const Image(
+          image: AssetImage('lib/assets/150.png'),
+          fit: BoxFit.cover,
+        ),
+        toolbarHeight: 100,
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 40, 145, 249),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(70),
           ),
         ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(7, 13, 7, 0),
-              child: Row(
-                children: [
-                  FloatingActionButton(
-                    onPressed: () => _selectDate(),
-                    elevation: 8,
-                    backgroundColor: Colors.blue,
-                    child: const Icon(
-                      Icons.calendar_month,
-                      size: 40,
-                      color: Colors.white,
-                    ),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(7, 13, 7, 0),
+            child: Row(
+              children: [
+                ///BOTÃO DE CALENDARIO
+                FloatingActionButton(
+                  onPressed: () => _selectDate(),
+                  elevation: 8,
+                  backgroundColor: Colors.blue,
+                  child: const Icon(
+                    Icons.calendar_month,
+                    size: 40,
+                    color: Colors.white,
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10, right: 10),
+                ),
+
+                /// CONTAINERS DA DATA
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(13),
+                          border: Border.all(
+                            color: Colors.blue,
+                            width: 2,
+                          )),
                       child: Container(
                         decoration: BoxDecoration(
-                            color: Colors.blue,
+                            border: Border.all(color: Colors.white, width: 1.5),
                             borderRadius: BorderRadius.circular(13),
-                            border: Border.all(
-                              color: Colors.blue,
-                              width: 2,
-                            )),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: Colors.white, width: 1.5),
-                              borderRadius: BorderRadius.circular(13),
-                              color: Colors.blue),
-                          child: Center(
-                            child: Text(
-                              DateFormat('dd/MM/yy').format(date),
-                              style: const TextStyle(
-                                fontSize: 23,
-                                color: Colors.white,
-                              ),
+                            color: Colors.blue),
+                        child: Center(
+                          child: Text(
+                            DateFormat('dd/MM/yy').format(date),
+                            style: const TextStyle(
+                              fontSize: 23,
+                              color: Colors.white,
                             ),
                           ),
                         ),
                       ),
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              // crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+
+          /// CONTAINER ATIVIDADES DO DIA
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(13),
+                          border: Border.all(
+                            color: Colors.blue,
+                            width: 2,
+                          )),
                       child: Container(
                         decoration: BoxDecoration(
-                            color: Colors.blue,
+                            border: Border.all(color: Colors.white, width: 1.5),
                             borderRadius: BorderRadius.circular(13),
-                            border: Border.all(
-                              color: Colors.blue,
-                              width: 2,
-                            )),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: Colors.white, width: 1.5),
-                              borderRadius: BorderRadius.circular(13),
-                              color: Colors.blue),
-                          child: const Center(
-                            child: Text(
-                              "Atividades do dia",
-                              style: TextStyle(
-                                fontSize: 23,
-                                color: Colors.white,
-                              ),
+                            color: Colors.blue),
+                        child: const Center(
+                          child: Text(
+                            "Atividades do dia",
+                            style: TextStyle(
+                              fontSize: 23,
+                              color: Colors.white,
                             ),
                           ),
                         ),
-                      )),
-                ),
-              ],
-            ),
-            // Container(
-            //     color: Colors.blue,
-            //     height: 200,
-            //     child: Image.asset(
-            //       'assets/pequeno.png',
-            //       fit: BoxFit.cover
-            //     ))
-          ],
-        ));
+                      ),
+                    )),
+              ),
+            ],
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        shape: const CircleBorder(),
+        backgroundColor: Colors.blue,
+        tooltip: 'Increment',
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+      ),
+    );
   }
 
   Widget _addTodo(Todo todo) {
@@ -140,6 +146,24 @@ class _AgendaPageState extends State<AgendaPage> {
       title: Text(todo.title),
       subtitle: Text(todo.description),
     );
+  }
+
+  Form _addTodoForm() {
+    return Form(
+      key: _formKey,
+      child:  Padding(padding: EdgeInsets.all(8.0),child: Column(
+        children: [
+          TextFormField(
+              decoration: InputDecoration(labelText: 'Nome'),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Por favor, insira seu nome';
+                }
+                return null;
+              },
+            ),
+        ],
+      ),));
   }
 
   Future<void> _selectDate() async {
