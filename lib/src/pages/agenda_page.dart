@@ -155,7 +155,7 @@ class _AgendaPageState extends State<AgendaPage> {
       builder: (BuildContext context) {
         return SingleChildScrollView(
           child: AlertDialog(
-            title: Text('Adicionar Tarefa'),
+            title: const Text('Adicionar Tarefa'),
             contentPadding: EdgeInsets.zero,
             content: _addTodoForm(), // Chame o formulário aqui
             actions: <Widget>[
@@ -163,7 +163,7 @@ class _AgendaPageState extends State<AgendaPage> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Cancelar'),
+                child: const Text('Cancelar'),
               ),
               TextButton(
                 onPressed: () {
@@ -171,7 +171,7 @@ class _AgendaPageState extends State<AgendaPage> {
                   // Por enquanto, apenas feche o diálogo
                   Navigator.of(context).pop();
                 },
-                child: Text('Salvar'),
+                child: const Text('Salvar'),
               ),
             ],
           ),
