@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import '../models/todo.dart';
+import '../models/date.dart';
 
 class AgendaPage extends StatefulWidget {
   const AgendaPage({super.key});
@@ -13,6 +14,10 @@ class AgendaPage extends StatefulWidget {
 class _AgendaPageState extends State<AgendaPage> {
   DateTime date = DateTime.now();
   final _formKey = GlobalKey<FormState>();
+  TimeOfDay _selectedTime = TimeOfDay.now();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final List<Todo> _todos = [];
 
   @override
   void initState() {
@@ -44,9 +49,8 @@ class _AgendaPageState extends State<AgendaPage> {
             padding: const EdgeInsets.fromLTRB(7, 13, 7, 0),
             child: Row(
               children: [
-                ///BOTÃO DE CALENDARIO
                 FloatingActionButton(
-                  onPressed: () => _selectDate(),
+                  onPressed: _selectDate,
                   elevation: 8,
                   backgroundColor: Colors.blue,
                   child: const Icon(
@@ -55,8 +59,6 @@ class _AgendaPageState extends State<AgendaPage> {
                     color: Colors.white,
                   ),
                 ),
-
-                /// CONTAINERS DA DATA
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10, right: 10),
@@ -92,8 +94,6 @@ class _AgendaPageState extends State<AgendaPage> {
           const SizedBox(
             height: 8,
           ),
-
-          /// CONTAINER ATIVIDADES DO DIA
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -127,10 +127,97 @@ class _AgendaPageState extends State<AgendaPage> {
               ),
             ],
           ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _todos.length,
+              itemBuilder: (context, index) {
+                final todo = _todos[index];
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Colors.blue,
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                    leading: Icon(
+                      todo.isDone ? Icons.check_circle : Icons.radio_button_unchecked,
+                      color: todo.isDone ? Colors.green : Colors.blue,
+                      size: 24,
+                    ),
+                    title: Text(
+                      todo.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 2),
+                        Text(
+                          todo.description,
+                          style: const TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            Text(
+                              "Data: ${DateFormat('dd/MM/yy').format(todo.date.day)}",
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(width: 10), // Espaço entre a data e a hora
+                            Text(
+                              "Hora: ${todo.date.time.format(context)}",
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.blue),
+                      onPressed: () {
+                        setState(() {
+                          _todos.removeAt(index);
+                        });
+                      },
+                    ),
+                    onTap: () {
+                      setState(() {
+                        todo.isDone = !todo.isDone;
+                      });
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddTodoForm(),
+        onPressed: _showAddTodoForm,
         shape: const CircleBorder(),
         backgroundColor: Colors.blue,
         tooltip: 'Increment',
@@ -142,39 +229,40 @@ class _AgendaPageState extends State<AgendaPage> {
     );
   }
 
-  Widget _addTodo(Todo todo) {
-    return ListTile(
-      title: Text(todo.title),
-      subtitle: Text(todo.description),
-    );
-  }
-
   void _showAddTodoForm() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: AlertDialog(
-            title: const Text('Adicionar Tarefa'),
-            contentPadding: EdgeInsets.zero,
-            content: _addTodoForm(), // Chame o formulário aqui
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
+        return AlertDialog(
+          title: const Text('Adicionar Tarefa'),
+          content: _addTodoForm(),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                if (_formKey.currentState?.validate() ?? false) {
+                  setState(() {
+                    _todos.add(Todo(
+                      title: _titleController.text,
+                      description: _descriptionController.text,
+                      date: Date(day: date, time: _selectedTime),
+                      isDone: false,
+                    ));
+                    _titleController.clear();
+                    _descriptionController.clear();
+                    _selectedTime = TimeOfDay.now();
+                  });
                   Navigator.of(context).pop();
-                },
-                child: const Text('Cancelar'),
-              ),
-              TextButton(
-                onPressed: () {
-                  // Aqui você pode adicionar lógica para salvar a tarefa
-                  // Por enquanto, apenas feche o diálogo
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Salvar'),
-              ),
-            ],
-          ),
+                }
+              },
+              child: const Text('Salvar'),
+            ),
+          ],
         );
       },
     );
@@ -182,42 +270,110 @@ class _AgendaPageState extends State<AgendaPage> {
 
   Widget _addTodoForm() {
     return Form(
-        key: _formKey,
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Titulo',
-                  labelStyle: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  hintText: 'Insira o titulo da atividade',
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: _titleController,
+              decoration: const InputDecoration(
+                labelText: 'Titulo',
+                labelStyle: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
-                validator: (value) {
-                  if (value != null && value.isEmpty) {
-                    return 'Por favor, insira seu nome';
-                  }
-                  return null;
-                },
+                hintText: 'Insira o titulo da atividade',
               ),
-            ],
-          ),
-        ));
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor, insira o título';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: _descriptionController,
+              decoration: const InputDecoration(
+                labelText: 'Descrição',
+                labelStyle: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+                hintText: 'Insira a descrição da atividade',
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor, insira a descrição';
+                }
+                return null;
+              },
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                InkWell(
+                  onTap: () {
+                    _selectTime(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(13),
+                          border: Border.all(
+                            color: Colors.blue,
+                            width: 2,
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                        child: Text(
+                          'Hora selecionada: ${_selectedTime.format(context)}',
+                          style: const TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _selectDate() async {
     DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2020),
-        lastDate: DateTime(2100));
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
 
     if (picked != null) {
       setState(() {
         date = picked;
+      });
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime,
+    );
+    if (picked != null && picked != _selectedTime) {
+      setState(() {
+        _selectedTime = picked;
       });
     }
   }
